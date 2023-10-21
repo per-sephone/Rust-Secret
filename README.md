@@ -1,6 +1,5 @@
 # Rust Secret by Nora Luna
 based on postsecret.com
-made for CS 510 Rust
 
 This will be an anonymous secret posting website where strangers can post their secrets to the discussion board.
 
