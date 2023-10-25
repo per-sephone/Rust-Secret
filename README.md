@@ -8,7 +8,7 @@ This will be an anonymous secret posting website where strangers can post their 
 - The ability to post a comment on a post
 - A database to store the posted secrets and comments
 
-## Additional Features:
+## Stretch Goals:
 - Subject Tags on posts 
 - A search feature based on subject tags
 - Links to popular subjects tags
