@@ -1,11 +1,12 @@
-{% extends "layout.html" %}
-{% block content %}
-    <h2>Share Your Secret</h2>
-    <form action="{{ url_for('create') }}" method=post>
-        <p class="heading">
-            <textarea rows=5 cols=50 name=quote></textarea></p>
-	<p><input type=submit value=Submit></p>
-    </form>
-<a href="{{ url_for('index')}}">Back</a>
-
-{% endblock %}
+<!doctype html>
+<html>
+  <title>Rust Secret</title>
+  <h2>Share Your Secret</h2>
+  <form action="{{ url_for('create') }}" method="post">
+    <p class="heading">
+      <textarea rows="5" cols="50" name="quote"></textarea>
+    </p>
+    <p><input type="submit" value="Submit" /></p>
+  </form>
+  <a href="{{ url_for('index')}}">Back</a>
+</html>

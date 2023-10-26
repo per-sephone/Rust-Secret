@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+  <head><link rel="stylesheet" type="text/css" href="style.css"></head>
+  <body>
+  <title>Rust Secret</title>
+  <br />
+  <a href="{{ url_for('create')}}">Share a Secret</a
+  ><br />
+
+  <h2>Secrets</h2>
+
+  <!--FIX HERE-->
+  <form action="{{ url_for('comment', id=secret.id) }}" method="post">
+    <p class="secret">
+      {{ secret.body }}<br />
+      {{ entry.date }} <br />
+      <input type="submit" value="Comment" />
+    </p>
+  </form>
+  <!--FIX HERE-->
+</body>
+</html>
