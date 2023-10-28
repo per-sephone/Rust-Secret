@@ -1,18 +1,14 @@
-<!doctype html>
-<html>
-  <title>Rust Secret</title>
+{% extends "layout.html" %}
+{% block content %}
 
-  <h2>Leave a Comment</h2>
-  <form action="{{ url_for('comment', id=secret.id) }}" method="post">
-    <p class="entry">
-      {{ secret.body }}<br />
-      {{ entry.date }} <br />
+<h2>Leave a Comment</h2>
+<form action="{{ url_for('comment', id=secret.id) }}" method=post>
+    <p class=entry>
+        {{ secret.body }}<br>
+        {{ secret.timestamp }} <br>
+        <p class="heading">
+            <textarea rows=5 cols=50 name=quote></textarea></p>
+        <input type=submit value="Comment"></input>
     </p>
-
-    <p class="heading">
-      <textarea rows="5" cols="50" name="quote"></textarea>
-    </p>
-    <input type="submit" value="Comment" />
-    <a href="{{ url_for('index')}}">Back</a>
-  </form>
-</html>
+<a href="{{ url_for('index')}}">Back</a>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block content %}
+<br>
+<a href="{{ url_for('create')}}">Share a Secret</a><br>
+
+    <h2>Secrets</h2>
+    {% for secret in secrets %}
+    <form action="{{ url_for('comment', id=secret.id) }}" method=post>
+        <p class=secret>
+            {{ secret.body }}<br>
+            {{ secret.timestamp }} <br>
+
+            <input type=submit value="Comment"></input>
+        </p>
+
+    {% endfor %}
+
+{% endblock %}
