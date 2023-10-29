@@ -1,11 +1,16 @@
 {% extends "layout.html" %}
+{% block title %}Rust Secret{% endblock title %}
+{% block head %}
+    {{ super() }}
+{% endblock head %}
 {% block content %}
 <br>
-<a href="{{ url_for('create')}}">Share a Secret</a><br>
+<!---->
+<a href="create.html">Share a Secret</a><br>
 
     <h2>Secrets</h2>
     {% for secret in secrets %}
-    <form action="{{ url_for('comment', id=secret.id) }}" method=post>
+    <form action="comment.html" method=post>
         <p class=secret>
             {{ secret.body }}<br>
             {{ secret.timestamp }} <br>
