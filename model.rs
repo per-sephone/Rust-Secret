@@ -1,6 +1,4 @@
 //https://rust-lang-nursery.github.io/rust-cookbook/datetime.html
-
-extern crate chrono;
 use chrono::Utc;
 
 pub struct Secret {
