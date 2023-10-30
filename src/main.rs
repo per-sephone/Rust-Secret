@@ -1,44 +1,65 @@
 use axum::routing::{get, post};
 use axum::Router;
-//use std::sync::Arc;
+use serde::Serialize;
+use std::sync::Arc;
 use tera::Tera;
 mod model;
 use model::Model;
 
-//https://keats.github.io/tera/docs/
-fn template_init() -> Tera {
+#[derive(Serialize)]
+pub struct Secret {
+    pub id: i64,
+    pub body: String,
+    pub timestamp: String,
+    pub tag: String,
+}
+
+pub struct Comment {
+    pub body: String,
+    pub timestamp: String,
+}
+
+async fn index() {
+    let connection = establish_connection();
+    let mut stmt = connection.prepare("SELECT id, body, timestamp, tag FROM secrets").unwrap();
+    let secrets: Result<Vec<Secret>, rusqlite::Error> = stmt
+        .query_map([], |row| {
+            Ok(Secret {
+                id: row.get(0)?,
+                body: row.get(1)?,
+                timestamp: row.get(2)?,
+                tag: row.get(3)?,
+            })
+        }).unwrap().collect();
+
     let tera = Tera::new("templates/*.html").unwrap();
-    //let tera = Arc::new(tera);
+    let tera = Arc::new(tera);
+    let mut context = tera::Context::new();
+    context.insert("secrets", &secrets.unwrap());
+    tera.render("index.html", &context).expect("Error rendering template");
 
-    let context = tera::Context::new();
-    //context.insert("secret.body", &"test");
-    //context.insert("secret.timestamp", &Utc::now().to_string());
-    tera.render("index.html", &context).unwrap();
-    tera.render("create.html", &context).unwrap();
-    tera.render("comment.html", &context).unwrap();
-    tera
 }
 
-fn database_init() -> Result<Model, rusqlite::Error> {
-    //connect to the model
-    let model = Model::new()?;
-    Ok(model)
-}
-
-async fn index() {}
-
-async fn create() {
-    
-}
+async fn create() {}
 
 async fn comment() {}
 
-//https://docs.rs/axum/latest/axum/
+fn establish_connection() -> rusqlite::Connection {
+    Model::new()
+}
 
+//https://docs.rs/axum/latest/axum/
 #[tokio::main]
 async fn main() {
-    let model = database_init();
-    let tera = template_init();
+
+    //init tera templating
+    //https://keats.github.io/tera/docs/
+    //let tera = Tera::new("templates/*.html").unwrap();
+    //let tera = Arc::new(tera);
+    //let context = tera::Context::new();
+    //tera.render("index.html", &context).unwrap();
+    //    tera.render("create.html", &context).unwrap();
+    //    tera.render("comment.html", &context).unwrap();
 
     let app = Router::new()
         .route("/", get(index))

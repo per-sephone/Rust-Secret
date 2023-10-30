@@ -5,10 +5,11 @@
 {% endblock head %}
 {% block content %}
 <br>
-<!---->
+
 <a href="create.html">Share a Secret</a><br>
 
     <h2>Secrets</h2>
+
     {% for secret in secrets %}
     <form action="comment.html" method=post>
         <p class=secret>
@@ -19,5 +20,6 @@
         </p>
 
     {% endfor %}
+
 
 {% endblock %}

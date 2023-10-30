@@ -936,7 +936,9 @@ dependencies = [
  "chrono",
  "dotenv",
  "hyper",
+ "lazy_static",
  "rusqlite",
+ "serde",
  "tera",
  "tokio",
 ]
