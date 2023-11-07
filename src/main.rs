@@ -1,10 +1,14 @@
-use axum::routing::{get, post};
+use axum::routing::get;
 use axum::Router;
+use axum::http::Response;
+use axum::body::Body;
+use axum_macros::debug_handler;
 use serde::Serialize;
-use std::sync::Arc;
+//use std::sync::Arc;
 use tera::Tera;
 mod model;
 use model::Model;
+
 
 #[derive(Serialize)]
 pub struct Secret {
@@ -19,36 +23,29 @@ pub struct Comment {
     pub timestamp: String,
 }
 
-async fn index() {
-    let connection = establish_connection();
-    let mut stmt = connection.prepare("SELECT id, body, timestamp, tag FROM secrets").unwrap();
-    let secrets: Result<Vec<Secret>, rusqlite::Error> = stmt
-        .query_map([], |row| {
-            Ok(Secret {
-                id: row.get(0)?,
-                body: row.get(1)?,
-                timestamp: row.get(2)?,
-                tag: row.get(3)?,
-            })
-        }).unwrap().collect();
-
+#[debug_handler]
+async fn index() -> Result<Response<Body>, axum::body::Empty<axum::body::Bytes>> {
+    let model = establish_connection();
+    let entries = model.select().unwrap();
     let tera = Tera::new("templates/*.html").unwrap();
-    let tera = Arc::new(tera);
+    //let tera = Arc::new(t);
     let mut context = tera::Context::new();
-    context.insert("secrets", &secrets.unwrap());
-    tera.render("index.html", &context).expect("Error rendering template");
-
+    context.insert("entries", &entries);
+    let rendered = tera.render("index.html", &context).unwrap();
+    let response = Response::new(Body::from(rendered));
+    Ok(response)
 }
 
-async fn create() {}
+//async fn create() {}
 
-async fn comment() {}
+//async fn comment() {}
 
-fn establish_connection() -> rusqlite::Connection {
-    Model::new()
+fn establish_connection() -> Model {
+    Model::new().unwrap()
 }
 
 //https://docs.rs/axum/latest/axum/
+
 #[tokio::main]
 async fn main() {
 
@@ -62,9 +59,9 @@ async fn main() {
     //    tera.render("comment.html", &context).unwrap();
 
     let app = Router::new()
-        .route("/", get(index))
-        .route("/create", post(create))
-        .route("/comment/{id}", post(comment));
+        .route("/", get(index));
+        //.route("/create", post(create))
+        //.route("/comment/{id}", post(comment));
 
     // run it with hyper on localhost:3000
     axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())

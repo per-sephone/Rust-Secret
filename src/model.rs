@@ -7,8 +7,8 @@ pub struct Model {
 }
 
 impl Model {
-    pub fn new() -> Connection {
-        let connection = Connection::open(DB_FILE).unwrap();
+    pub fn new() -> Result<Model> {
+        let connection = Connection::open(DB_FILE)?;
         connection
             .execute(
                 "CREATE TABLE IF NOT EXISTS secrets (
@@ -19,8 +19,8 @@ impl Model {
             )",
                 [],
             )
-            .unwrap();
-        connection
+            ?;
+        Ok(Model {connection,})
     }
 
     /*
@@ -35,7 +35,7 @@ impl Model {
     }
     */
 
-    /*
+
     pub fn select(&self) -> Result<Vec<(i64, String, String, String)>> {
         let mut stmt = self.connection.prepare("SELECT * FROM secrets")?;
         let rows = stmt.query_map([], |row| {
@@ -50,8 +50,8 @@ impl Model {
         }
         Ok(result)
     }
-    */
 
+/* 
     pub fn insert(&self, body: String, timestamp: String, tag: String) -> Result<()> {
         self.connection.execute(
             "INSERT INTO secrets (body, timestamp, tag)
@@ -60,6 +60,7 @@ impl Model {
         )?;
         Ok(())
     }
+*/
 
     /*
         pub fn delete(&self, id: i64) -> Result<()> {
