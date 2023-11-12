@@ -2,7 +2,7 @@
 {% block content %}
 
 <h2>Leave a Comment</h2>
-<form action="comment.html" method=post>
+<form action="comment" method=post>
     <p class=entry>
         {{ secret.body }}<br>
         {{ secret.timestamp }} <br>
@@ -10,5 +10,5 @@
             <textarea rows=5 cols=50 name=quote></textarea></p>
         <input type=submit value="Comment"></input>
     </p>
-<a href="index.html">Back</a>
+<a href="index">Back</a>
 {% endblock %}

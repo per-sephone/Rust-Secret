@@ -6,12 +6,12 @@
 {% block content %}
 <br>
 
-<a href="create.html">Share a Secret</a><br>
+<a href="create">Share a Secret</a><br>
 
     <h2>Secrets</h2>
 
     {% for secret in entries %}
-    <form action="comment.html" method=post>
+    <form action="comment" method=post>
         <p class=secret>
             {{ secret.body }}<br>
             {{ secret.timestamp }} <br>

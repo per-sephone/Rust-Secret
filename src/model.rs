@@ -9,18 +9,16 @@ pub struct Model {
 impl Model {
     pub fn new() -> Result<Model> {
         let connection = Connection::open(DB_FILE)?;
-        connection
-            .execute(
-                "CREATE TABLE IF NOT EXISTS secrets (
+        connection.execute(
+            "CREATE TABLE IF NOT EXISTS secrets (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 body TEXT,
                 timestamp TEXT,
                 tag TEXT
             )",
-                [],
-            )
-            ?;
-        Ok(Model {connection,})
+            [],
+        )?;
+        Ok(Model { connection })
     }
 
     /*
@@ -34,7 +32,6 @@ impl Model {
         datetime.format("%Y-%m-%d %H:%M:%S").to_string()
     }
     */
-
 
     pub fn select(&self) -> Result<Vec<(i64, String, String, String)>> {
         let mut stmt = self.connection.prepare("SELECT * FROM secrets")?;
@@ -51,7 +48,6 @@ impl Model {
         Ok(result)
     }
 
-/* 
     pub fn insert(&self, body: String, timestamp: String, tag: String) -> Result<()> {
         self.connection.execute(
             "INSERT INTO secrets (body, timestamp, tag)
@@ -60,7 +56,6 @@ impl Model {
         )?;
         Ok(())
     }
-*/
 
     /*
         pub fn delete(&self, id: i64) -> Result<()> {

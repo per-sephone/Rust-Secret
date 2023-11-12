@@ -2,11 +2,12 @@
 {% extends "layout.html" %}
 {% block content %}
     <h2>Share Your Secret</h2>
-    <form action="create.html" method=post>
+    <form action="create" method=post>
         <p class="heading">
-            <textarea rows=5 cols=50 name=quote></textarea></p>
+            <textarea rows=5 cols=50 name=body></textarea></p>
+        <p class="heading">Tag: <input name=tag></p>
 	<p><input type=submit value=Submit></p>
     </form>
-<a href="index.html">Back</a>
+<a href="/">Back</a>
 
 {% endblock %}
