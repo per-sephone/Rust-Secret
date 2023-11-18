@@ -20,29 +20,13 @@ pub struct Secret {
     pub body: String,
     pub timestamp: String,
     pub tag: String,
+    pub comments: Vec<String>,
 }
-
-/*
-impl Secret {
-    fn from_row(row: &Vec<serde_json::Value>) -> Secret {
-        Secret {
-            id: row[0].as_i64().unwrap(),
-            body: row[1].as_str().unwrap_or_default().to_string(),
-            timestamp: row[2].as_str().unwrap_or_default().to_string(),
-            tag: row[3].as_str().unwrap_or_default().to_string(),
-        }
-    }
-}*/
 
 #[derive(Deserialize)]
 pub struct FormData {
     pub body: String,
     pub tag: String,
-}
-
-pub struct Comment {
-    pub body: String,
-    pub timestamp: String,
 }
 
 #[debug_handler]
@@ -53,10 +37,11 @@ async fn index() -> Result<Response<Body>, axum::body::Empty<axum::body::Bytes>>
         .unwrap()
         .iter()
         .map(|row| Secret {
-            id: row.0.clone(),
+            id: row.0,
             body: row.1.clone(),
             timestamp: row.2.clone(),
             tag: row.3.clone(),
+            comments: row.4.clone(),
         })
         .collect();
     let tera = Tera::new("templates/*.html").unwrap();
@@ -81,11 +66,15 @@ async fn get_create() -> Result<Response<Body>, axum::body::Empty<axum::body::By
 #[debug_handler]
 async fn post_create(Form(form): Form<FormData>) -> Redirect {
     let model = establish_connection();
-    let _ = model.insert(form.body, Utc::now().to_rfc3339(), form.tag);
+    let _ = model.insert(form.body, Utc::now().to_rfc3339(), form.tag, Vec::new());
     Redirect::to("/")
 }
 
-//async fn comment() {}
+#[debug_handler]
+async fn get_comment() {}
+
+#[debug_handler]
+async fn post_comment() {}
 
 fn establish_connection() -> Model {
     Model::new().unwrap()
@@ -107,7 +96,7 @@ async fn main() {
     let app = Router::new()
         .route("/", get(index))
         .route("/create", get(get_create).post(post_create))
-        //.route("/comment/{id}", post(comment))
+        //.route("/comment/{id}", get(get_comment).post(post_comment))
         // https://www.joeymckenzie.tech/blog/templates-with-rust-axum-htmx-askama
         .nest_service("/static", ServeDir::new(format!("{}/static", std::env::current_dir().unwrap().to_str().unwrap())));
 

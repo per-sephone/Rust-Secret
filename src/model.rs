@@ -14,58 +14,41 @@ impl Model {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 body TEXT,
                 timestamp TEXT,
-                tag TEXT
+                tag TEXT,
+                comments TEXT
             )",
             [],
         )?;
         Ok(Model { connection })
     }
 
-    pub fn select(&self) -> Result<Vec<(i64, String, String, String)>> {
+    pub fn select(&self) -> Result<Vec<(i64, String, String, String, Vec<String>)>> {
         let mut stmt = self.connection.prepare("SELECT * FROM secrets")?;
         let rows = stmt.query_map([], |row| {
-            Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?))
+            Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, serde_json::from_str::<Vec<String>>(row.get::<usize, String>(4)?.as_str()).unwrap()))
         })?;
         let mut result = Vec::new();
         for row in rows {
             match row {
-                Ok((c0, c1, c2, c3)) => result.push((c0, c1, c2, c3)),
+                Ok((c0, c1, c2, c3, c4)) => result.push((c0, c1, c2, c3,c4)),
                 Err(err) => return Err(err),
             }
         }
         Ok(result)
     }
 
-    pub fn insert(&self, body: String, timestamp: String, tag: String) -> Result<()> {
+    pub fn insert(&self, body: String, timestamp: String, tag: String, comments: Vec<String>) -> Result<()> {
         self.connection.execute(
-            "INSERT INTO secrets (body, timestamp, tag)
-            VALUES (?, ?, ?)",
-            [body, timestamp, tag],
+            "INSERT INTO secrets (body, timestamp, tag, comments)
+            VALUES (?, ?, ?, ?)",
+            [body, timestamp, tag, serde_json::to_string(&comments).unwrap()],
         )?;
         Ok(())
     }
 
-    /*
-        pub fn (&self, id: i64) -> Result<()> {
-        self.connection.execute("DELETE FROM secrets WHERE id = ?", [id])?;
+
+        pub fn add_comment(&self, id: i64, comment: String) -> Result<()> {
+        self.connection.execute("UPDATE secrets SET comments = JSON_ARRAY_APPEND(comments, '$', ?) WHERE id = ?", [comment, id.to_string()])?;
         Ok(())
-    }*/
-}
-
-/*
-fn main() -> Result<()> {
-    let model = Model::new()?;
-
-    // Use the model to interact with the database
-    // For example:
-    let secrets = model.select()?;
-    for (id, body, timestamp, tag) in secrets {
-        println!(
-            "ID: {}, Body: {}, Timestamp: {}, Tag: {}",
-            id, body, timestamp, tag
-        );
     }
-
-    Ok(())
 }
-*/
