@@ -2,7 +2,7 @@ use axum::body::Body;
 use axum::extract::Form;
 use axum::http::Response;
 use axum::response::Redirect;
-use axum::routing::{get, post};
+use axum::routing::get;
 use axum::Router;
 use axum_macros::debug_handler;
 use serde::{Deserialize, Serialize};
@@ -11,6 +11,7 @@ use tera::Tera;
 mod model;
 use chrono::Utc;
 use model::Model;
+use tower_http::services::ServeDir;
 //use serde_json;
 
 #[derive(Serialize, Deserialize)]
@@ -105,10 +106,11 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(index))
-        .route("/create", get(get_create).post(post_create));
-    //.route("/comment/{id}", post(comment));
+        .route("/create", get(get_create).post(post_create))
+        //.route("/comment/{id}", post(comment))
+        // https://www.joeymckenzie.tech/blog/templates-with-rust-axum-htmx-askama
+        .nest_service("/static", ServeDir::new(format!("{}/static", std::env::current_dir().unwrap().to_str().unwrap())));
 
-    // run it with hyper on localhost:3000
     axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
         .serve(app.into_make_service())
         .await
