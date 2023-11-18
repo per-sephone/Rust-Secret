@@ -21,18 +21,6 @@ impl Model {
         Ok(Model { connection })
     }
 
-    /*
-    pub fn parse_datetime_from_string(datetime_str: &str) -> Result<DateTime<Utc>, ParseError> {
-        let naive_datetime = NaiveDateTime::parse_from_str(datetime_str, "%Y-%m-%d %H:%M:%S")?;
-        let utc_datetime = Utc.from_utc_datetime(&naive_datetime);
-        Ok(utc_datetime)
-    }
-
-    pub fn format_datetime_for_sqlite(datetime: &DateTime<Utc>) -> String {
-        datetime.format("%Y-%m-%d %H:%M:%S").to_string()
-    }
-    */
-
     pub fn select(&self) -> Result<Vec<(i64, String, String, String)>> {
         let mut stmt = self.connection.prepare("SELECT * FROM secrets")?;
         let rows = stmt.query_map([], |row| {
@@ -58,7 +46,7 @@ impl Model {
     }
 
     /*
-        pub fn delete(&self, id: i64) -> Result<()> {
+        pub fn (&self, id: i64) -> Result<()> {
         self.connection.execute("DELETE FROM secrets WHERE id = ?", [id])?;
         Ok(())
     }*/
