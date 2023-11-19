@@ -41,6 +41,7 @@ impl Model {
         self.connection.execute(
             "INSERT INTO secrets (body, timestamp, tag, comments)
             VALUES (?, ?, ?, ?)",
+            //https://stackoverflow.com/questions/13781552/insert-a-vector-to-a-database
             [body, timestamp, tag, serde_json::to_string(&comments).unwrap()],
         )?;
         Ok(())

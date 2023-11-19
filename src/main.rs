@@ -104,7 +104,7 @@ async fn main() {
     let app = Router::new()
         .route("/", get(index))
         .route("/create", get(get_create).post(post_create))
-        .route("/comment/{id}", get(get_comment).post(post_comment))
+        .route("/comment/:id", get(get_comment).post(post_comment))
         // https://www.joeymckenzie.tech/blog/templates-with-rust-axum-htmx-askama
         .nest_service("/static", ServeDir::new(format!("{}/static", std::env::current_dir().unwrap().to_str().unwrap())));
 
