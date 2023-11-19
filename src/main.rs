@@ -14,7 +14,7 @@ use model::Model;
 use tower_http::services::ServeDir;
 //use serde_json;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Secret {
     pub id: i64,
     pub body: String,
@@ -44,6 +44,7 @@ async fn index() -> Result<Response<Body>, axum::body::Empty<axum::body::Bytes>>
             comments: row.4.clone(),
         })
         .collect();
+    //https://keats.github.io/tera/docs/
     let tera = Tera::new("templates/*.html").unwrap();
     //let tera = Arc::new(tera);
     let mut context = tera::Context::new();
@@ -73,14 +74,8 @@ async fn post_create(Form(form): Form<FormData>) -> Redirect {
 #[debug_handler]
 async fn get_comment(Path(id): Path<i64>) -> Result<Response<Body>, axum::body::Empty<axum::body::Bytes>> {
     let model = establish_connection();
-    let secret = match model.select_by_id(id).unwrap() {
-        Some((id, body, timestamp, tag, comments)) => Secret{
-            id, body, timestamp, tag, comments,
-        },
-        None => {
-            return Err(axum::body::Empty::new());
-        }
-    };
+    let entry = model.select_by_id(id).unwrap();
+    let secret = Secret{id:entry.0, body:entry.1, timestamp: entry.2, tag:entry.3, comments:entry.4};
     let tera = Tera::new("templates/*.html").unwrap();
     //let tera = Arc::new(tera);
     let mut context = tera::Context::new();
@@ -91,7 +86,11 @@ async fn get_comment(Path(id): Path<i64>) -> Result<Response<Body>, axum::body::
 }
 
 #[debug_handler]
-async fn post_comment(Path(id): Path<i64>) {}
+async fn post_comment(Path(id): Path<i64>, Form(form): Form<String>) -> Redirect {
+    let model = establish_connection();
+    let _ = model.add_comment(id, form);
+    Redirect::to("/")
+}
 
 fn establish_connection() -> Model {
     Model::new().unwrap()
@@ -101,14 +100,6 @@ fn establish_connection() -> Model {
 
 #[tokio::main]
 async fn main() {
-    //init tera templating
-    //https://keats.github.io/tera/docs/
-    //let tera = Tera::new("templates/*.html").unwrap();
-    //let tera = Arc::new(tera);
-    //let context = tera::Context::new();
-    //tera.render("index.html", &context).unwrap();
-    //    tera.render("create.html", &context).unwrap();
-    //    tera.render("comment.html", &context).unwrap();
 
     let app = Router::new()
         .route("/", get(index))

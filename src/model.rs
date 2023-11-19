@@ -52,7 +52,7 @@ impl Model {
         Ok(())
     }
 
-    pub fn select_by_id(&self, id: i64) -> Result<Option<(i64, String, String, String, Vec<String>)>>  {
+    pub fn select_by_id(&self, id: i64) -> Result<(i64, String, String, String, Vec<String>)>  {
         let mut stmt = self.connection.prepare("SELECT * FROM secrets WHERE id = ?")?;
         let result = stmt.query_row([id], |row| {
             Ok((
@@ -63,11 +63,8 @@ impl Model {
                 serde_json::from_str::<Vec<String>>(row.get::<usize, String>(4)?.as_str()).unwrap(),
             ))
         });
-    
-        match result {
-            Ok(item) => Ok(Some(item)),
-            Err(err) => Err(err),
-        }
+        Ok(result.unwrap())
     }
+
     
 }

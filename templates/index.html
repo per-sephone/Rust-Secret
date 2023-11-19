@@ -11,14 +11,15 @@
     <h2>Secrets</h2>
 
     {% for secret in entries %}
-    <form action="comment" method=post>
+    <form action="comment/{{ secret.id }}" method=get>
         <p class=secret>
             {{ secret.body }}<br>
             {{ secret.timestamp }} <br>
 
             <input type=submit value="Comment"></input>
-        </p>
 
+        </p>
+    </form>
     {% endfor %}
 
 

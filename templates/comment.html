@@ -2,13 +2,14 @@
 {% block content %}
 
 <h2>Leave a Comment</h2>
-<form action="comment, {id=secret.id}" method=post>
+<form action="comment/{{ secret.id }}" method=post>
     <p class=entry>
         {{ secret.body }}<br>
         {{ secret.timestamp }} <br>
         <p class="heading">
-            <textarea rows=5 cols=50 name=quote></textarea></p>
+            <textarea rows=5 cols=50 name=comment></textarea></p>
         <input type=submit value="Comment"></input>
     </p>
 <a href="index">Back</a>
+</form>
 {% endblock %}
