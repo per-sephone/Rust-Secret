@@ -47,8 +47,27 @@ impl Model {
     }
 
 
-        pub fn add_comment(&self, id: i64, comment: String) -> Result<()> {
+    pub fn add_comment(&self, id: i64, comment: String) -> Result<()> {
         self.connection.execute("UPDATE secrets SET comments = JSON_ARRAY_APPEND(comments, '$', ?) WHERE id = ?", [comment, id.to_string()])?;
         Ok(())
     }
+
+    pub fn select_by_id(&self, id: i64) -> Result<Option<(i64, String, String, String, Vec<String>)>>  {
+        let mut stmt = self.connection.prepare("SELECT * FROM secrets WHERE id = ?")?;
+        let result = stmt.query_row([id], |row| {
+            Ok((
+                row.get(0)?,
+                row.get(1)?,
+                row.get(2)?,
+                row.get(3)?,
+                serde_json::from_str::<Vec<String>>(row.get::<usize, String>(4)?.as_str()).unwrap(),
+            ))
+        });
+    
+        match result {
+            Ok(item) => Ok(Some(item)),
+            Err(err) => Err(err),
+        }
+    }
+    
 }

@@ -1,5 +1,5 @@
 use axum::body::Body;
-use axum::extract::Form;
+use axum::extract::{Form, Path};
 use axum::http::Response;
 use axum::response::Redirect;
 use axum::routing::get;
@@ -71,10 +71,27 @@ async fn post_create(Form(form): Form<FormData>) -> Redirect {
 }
 
 #[debug_handler]
-async fn get_comment() {}
+async fn get_comment(Path(id): Path<i64>) -> Result<Response<Body>, axum::body::Empty<axum::body::Bytes>> {
+    let model = establish_connection();
+    let secret = match model.select_by_id(id).unwrap() {
+        Some((id, body, timestamp, tag, comments)) => Secret{
+            id, body, timestamp, tag, comments,
+        },
+        None => {
+            return Err(axum::body::Empty::new());
+        }
+    };
+    let tera = Tera::new("templates/*.html").unwrap();
+    //let tera = Arc::new(tera);
+    let mut context = tera::Context::new();
+    context.insert("secret", &secret);
+    let rendered = tera.render("comment.html", &context).unwrap();
+    let response = Response::new(Body::from(rendered));
+    Ok(response)
+}
 
 #[debug_handler]
-async fn post_comment() {}
+async fn post_comment(Path(id): Path<i64>) {}
 
 fn establish_connection() -> Model {
     Model::new().unwrap()
@@ -96,7 +113,7 @@ async fn main() {
     let app = Router::new()
         .route("/", get(index))
         .route("/create", get(get_create).post(post_create))
-        //.route("/comment/{id}", get(get_comment).post(post_comment))
+        .route("/comment/{id}", get(get_comment).post(post_comment))
         // https://www.joeymckenzie.tech/blog/templates-with-rust-axum-htmx-askama
         .nest_service("/static", ServeDir::new(format!("{}/static", std::env::current_dir().unwrap().to_str().unwrap())));
 

@@ -2,7 +2,7 @@
 {% block content %}
 
 <h2>Leave a Comment</h2>
-<form action="comment" method=post>
+<form action="comment, {id=secret.id}" method=post>
     <p class=entry>
         {{ secret.body }}<br>
         {{ secret.timestamp }} <br>
