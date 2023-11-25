@@ -2,7 +2,7 @@ use axum::body::Body;
 use axum::extract::{Form, Path};
 use axum::http::Response;
 use axum::response::Redirect;
-use axum::routing::get;
+use axum::routing::{get,post};
 use axum::Router;
 use axum_macros::debug_handler;
 use serde::{Deserialize, Serialize};
@@ -27,6 +27,11 @@ pub struct Secret {
 pub struct FormData {
     pub body: String,
     pub tag: String,
+}
+
+#[derive(Deserialize)]
+pub struct CommentData {
+    pub comment: String
 }
 
 #[debug_handler]
@@ -86,9 +91,9 @@ async fn get_comment(Path(id): Path<i64>) -> Result<Response<Body>, axum::body::
 }
 
 #[debug_handler]
-async fn post_comment(Path(id): Path<i64>, Form(form): Form<String>) -> Redirect {
+async fn post_comment(Path(id): Path<i64>, Form(form): Form<CommentData>) -> Redirect {
     let model = establish_connection();
-    let _ = model.add_comment(id, form);
+    let _ = model.add_comment(id, form.comment);
     Redirect::to("/")
 }
 
@@ -104,7 +109,8 @@ async fn main() {
     let app = Router::new()
         .route("/", get(index))
         .route("/create", get(get_create).post(post_create))
-        .route("/comment/:id", get(get_comment).post(post_comment))
+        .route("/comment/:id", get(get_comment))
+        .route("/comment/comment/:id", post(post_comment))
         // https://www.joeymckenzie.tech/blog/templates-with-rust-axum-htmx-askama
         .nest_service("/static", ServeDir::new(format!("{}/static", std::env::current_dir().unwrap().to_str().unwrap())));
 

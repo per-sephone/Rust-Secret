@@ -6,10 +6,18 @@
     <p class=entry>
         {{ secret.body }}<br>
         {{ secret.timestamp }} <br>
+
+        <h3>Comments</h3>
+        <p>
+        {% for each in secret.comments %}
+        {{ each }} <br><br>
+        {% endfor %}
+        </p>
+        
         <p class="heading">
             <textarea rows=5 cols=50 name=comment></textarea></p>
         <input type=submit value="Comment"></input>
     </p>
-<a href="index">Back</a>
+<a href="/">Back</a>
 </form>
 {% endblock %}

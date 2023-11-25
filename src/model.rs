@@ -15,7 +15,7 @@ impl Model {
                 body TEXT,
                 timestamp TEXT,
                 tag TEXT,
-                comments TEXT
+                comments JSON
             )",
             [],
         )?;
@@ -25,7 +25,10 @@ impl Model {
     pub fn select(&self) -> Result<Vec<(i64, String, String, String, Vec<String>)>> {
         let mut stmt = self.connection.prepare("SELECT * FROM secrets")?;
         let rows = stmt.query_map([], |row| {
-            Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, serde_json::from_str::<Vec<String>>(row.get::<usize, String>(4)?.as_str()).unwrap()))
+            let json_text: String = row.get(4)?;
+            let json_value = serde_json::from_str(&json_text).unwrap();
+            let json_array: Vec<String> = serde_json::from_value(json_value).unwrap();
+            Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, json_array))
         })?;
         let mut result = Vec::new();
         for row in rows {
@@ -38,30 +41,37 @@ impl Model {
     }
 
     pub fn insert(&self, body: String, timestamp: String, tag: String, comments: Vec<String>) -> Result<()> {
+        let comments_json = serde_json::to_string(&comments).unwrap();
         self.connection.execute(
             "INSERT INTO secrets (body, timestamp, tag, comments)
             VALUES (?, ?, ?, ?)",
             //https://stackoverflow.com/questions/13781552/insert-a-vector-to-a-database
-            [body, timestamp, tag, serde_json::to_string(&comments).unwrap()],
+            [body, timestamp, tag, comments_json],
         )?;
         Ok(())
     }
 
 
     pub fn add_comment(&self, id: i64, comment: String) -> Result<()> {
-        self.connection.execute("UPDATE secrets SET comments = JSON_ARRAY_APPEND(comments, '$', ?) WHERE id = ?", [comment, id.to_string()])?;
+        //https://www.sqlite.org/json1.html#jins
+        self.connection.execute("UPDATE secrets SET comments = JSON_INSERT(comments, '$[#]', ?) WHERE id = ?", 
+        [comment, id.to_string()]
+        )?;
         Ok(())
     }
 
     pub fn select_by_id(&self, id: i64) -> Result<(i64, String, String, String, Vec<String>)>  {
         let mut stmt = self.connection.prepare("SELECT * FROM secrets WHERE id = ?")?;
         let result = stmt.query_row([id], |row| {
+            let json_text: String = row.get(4)?;
+            let json_value = serde_json::from_str(&json_text).unwrap();
+            let json_array: Vec<String> = serde_json::from_value(json_value).unwrap();
             Ok((
                 row.get(0)?,
                 row.get(1)?,
                 row.get(2)?,
                 row.get(3)?,
-                serde_json::from_str::<Vec<String>>(row.get::<usize, String>(4)?.as_str()).unwrap(),
+                json_array,
             ))
         });
         Ok(result.unwrap())
