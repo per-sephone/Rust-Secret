@@ -94,7 +94,7 @@ async fn get_comment(Path(id): Path<i64>) -> Result<Response<Body>, axum::body::
 async fn post_comment(Path(id): Path<i64>, Form(form): Form<CommentData>) -> Redirect {
     let model = establish_connection();
     let _ = model.add_comment(id, form.comment);
-    Redirect::to("/")
+    Redirect::to(&format!("/comment/{}", id))
 }
 
 fn establish_connection() -> Model {
