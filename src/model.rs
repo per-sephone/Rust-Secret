@@ -31,19 +31,31 @@ impl Model {
             let json_text: String = row.get(4)?;
             let json_value = serde_json::from_str(&json_text).unwrap();
             let json_array: Vec<String> = serde_json::from_value(json_value).unwrap();
-            Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, json_array))
+            Ok((
+                row.get(0)?,
+                row.get(1)?,
+                row.get(2)?,
+                row.get(3)?,
+                json_array,
+            ))
         })?;
         let mut result = Vec::new();
         for row in rows {
             match row {
-                Ok((c0, c1, c2, c3, c4)) => result.push((c0, c1, c2, c3,c4)),
+                Ok((c0, c1, c2, c3, c4)) => result.push((c0, c1, c2, c3, c4)),
                 Err(err) => return Err(err),
             }
         }
         Ok(result)
     }
 
-    pub fn insert(&self, body: String, timestamp: String, tag: String, comments: Vec<String>) -> Result<()> {
+    pub fn insert(
+        &self,
+        body: String,
+        timestamp: String,
+        tag: String,
+        comments: Vec<String>,
+    ) -> Result<()> {
         let comments_json = serde_json::to_string(&comments).unwrap();
         self.connection.execute(
             "INSERT INTO secrets (body, timestamp, tag, comments)
@@ -54,17 +66,19 @@ impl Model {
         Ok(())
     }
 
-
     pub fn add_comment(&self, id: i64, comment: String) -> Result<()> {
         //https://www.sqlite.org/json1.html#jins
-        self.connection.execute("UPDATE secrets SET comments = JSON_INSERT(comments, '$[#]', ?) WHERE id = ?", 
-        [comment, id.to_string()]
+        self.connection.execute(
+            "UPDATE secrets SET comments = JSON_INSERT(comments, '$[#]', ?) WHERE id = ?",
+            [comment, id.to_string()],
         )?;
         Ok(())
     }
 
-    pub fn select_by_id(&self, id: i64) -> Result<Row>  {
-        let mut stmt = self.connection.prepare("SELECT * FROM secrets WHERE id = ?")?;
+    pub fn select_by_id(&self, id: i64) -> Result<Row> {
+        let mut stmt = self
+            .connection
+            .prepare("SELECT * FROM secrets WHERE id = ?")?;
         let result = stmt.query_row([id], |row| {
             let json_text: String = row.get(4)?;
             let json_value = serde_json::from_str(&json_text).unwrap();
@@ -79,6 +93,4 @@ impl Model {
         });
         Ok(result.unwrap())
     }
-
-    
 }

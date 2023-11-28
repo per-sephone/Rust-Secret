@@ -2,7 +2,7 @@ use axum::body::Body;
 use axum::extract::{Form, Path};
 use axum::http::Response;
 use axum::response::Redirect;
-use axum::routing::{get,post};
+use axum::routing::{get, post};
 use axum::Router;
 use axum_macros::debug_handler;
 use serde::{Deserialize, Serialize};
@@ -31,11 +31,10 @@ pub struct FormData {
 
 #[derive(Deserialize)]
 pub struct CommentData {
-    pub comment: String
+    pub comment: String,
 }
 
 fn get_timestamp() -> String {
-
     Local::now().format("%Y-%m-%d %H:%M").to_string()
 }
 
@@ -82,10 +81,18 @@ async fn post_create(Form(form): Form<FormData>) -> Redirect {
 }
 
 #[debug_handler]
-async fn get_comment(Path(id): Path<i64>) -> Result<Response<Body>, axum::body::Empty<axum::body::Bytes>> {
+async fn get_comment(
+    Path(id): Path<i64>,
+) -> Result<Response<Body>, axum::body::Empty<axum::body::Bytes>> {
     let model = establish_connection();
     let entry = model.select_by_id(id).unwrap();
-    let secret = Secret{id:entry.0, body:entry.1, timestamp: entry.2, tag:entry.3, comments:entry.4};
+    let secret = Secret {
+        id: entry.0,
+        body: entry.1,
+        timestamp: entry.2,
+        tag: entry.3,
+        comments: entry.4,
+    };
     let tera = Tera::new("templates/*.html").unwrap();
     //let tera = Arc::new(tera);
     let mut context = tera::Context::new();
@@ -110,14 +117,19 @@ fn establish_connection() -> Model {
 
 #[tokio::main]
 async fn main() {
-
     let app = Router::new()
         .route("/", get(index))
         .route("/create", get(get_create).post(post_create))
         .route("/comment/:id", get(get_comment))
         .route("/comment/comment/:id", post(post_comment))
         // https://www.joeymckenzie.tech/blog/templates-with-rust-axum-htmx-askama
-        .nest_service("/static", ServeDir::new(format!("{}/static", std::env::current_dir().unwrap().to_str().unwrap())));
+        .nest_service(
+            "/static",
+            ServeDir::new(format!(
+                "{}/static",
+                std::env::current_dir().unwrap().to_str().unwrap()
+            )),
+        );
 
     axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
         .serve(app.into_make_service())
