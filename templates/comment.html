@@ -6,11 +6,12 @@
     <p class=entry>
         {{ secret.body }}<br>
         {{ secret.timestamp }} <br>
+        Tagged: {{ secret.tag }} <br>
 
         <h2>Comments</h2>
         <p>
         {% for each in secret.comments %}
-        {{ each }} <br><br>
+        {{ each }} <br><br><br>
         {% endfor %}
         </p>
         

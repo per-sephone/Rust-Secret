@@ -2,6 +2,9 @@ use rusqlite::{Connection, Result};
 
 static DB_FILE: &str = "entries.db";
 
+// a row in the database
+type Row = (i64, String, String, String, Vec<String>);
+
 pub struct Model {
     pub connection: Connection,
 }
@@ -22,7 +25,7 @@ impl Model {
         Ok(Model { connection })
     }
 
-    pub fn select(&self) -> Result<Vec<(i64, String, String, String, Vec<String>)>> {
+    pub fn select(&self) -> Result<Vec<Row>> {
         let mut stmt = self.connection.prepare("SELECT * FROM secrets")?;
         let rows = stmt.query_map([], |row| {
             let json_text: String = row.get(4)?;
@@ -60,7 +63,7 @@ impl Model {
         Ok(())
     }
 
-    pub fn select_by_id(&self, id: i64) -> Result<(i64, String, String, String, Vec<String>)>  {
+    pub fn select_by_id(&self, id: i64) -> Result<Row>  {
         let mut stmt = self.connection.prepare("SELECT * FROM secrets WHERE id = ?")?;
         let result = stmt.query_row([id], |row| {
             let json_text: String = row.get(4)?;

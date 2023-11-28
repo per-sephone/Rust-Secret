@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 //use std::sync::Arc;
 use tera::Tera;
 mod model;
-use chrono::Utc;
+use chrono::Local;
 use model::Model;
 use tower_http::services::ServeDir;
 //use serde_json;
@@ -32,6 +32,11 @@ pub struct FormData {
 #[derive(Deserialize)]
 pub struct CommentData {
     pub comment: String
+}
+
+fn get_timestamp() -> String {
+
+    Local::now().format("%Y-%m-%d %H:%M").to_string()
 }
 
 #[debug_handler]
@@ -72,7 +77,7 @@ async fn get_create() -> Result<Response<Body>, axum::body::Empty<axum::body::By
 #[debug_handler]
 async fn post_create(Form(form): Form<FormData>) -> Redirect {
     let model = establish_connection();
-    let _ = model.insert(form.body, Utc::now().to_rfc3339(), form.tag, Vec::new());
+    let _ = model.insert(form.body, get_timestamp(), form.tag, Vec::new());
     Redirect::to("/")
 }
 
