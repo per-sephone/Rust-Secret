@@ -6,7 +6,6 @@ use axum::routing::{get, post};
 use axum::Router;
 use axum_macros::debug_handler;
 use serde::{Deserialize, Serialize};
-//use std::sync::Arc;
 use tera::Tera;
 mod model;
 use chrono::Local;
@@ -55,7 +54,6 @@ async fn index() -> Result<Response<Body>, axum::body::Empty<axum::body::Bytes>>
         .collect();
     //https://keats.github.io/tera/docs/
     let tera = Tera::new("templates/*.html").unwrap();
-    //let tera = Arc::new(tera);
     let mut context = tera::Context::new();
     context.insert("entries", &entries);
     let rendered = tera.render("index.html", &context).unwrap();
@@ -66,7 +64,6 @@ async fn index() -> Result<Response<Body>, axum::body::Empty<axum::body::Bytes>>
 #[debug_handler]
 async fn get_create() -> Result<Response<Body>, axum::body::Empty<axum::body::Bytes>> {
     let tera = Tera::new("templates/*.html").unwrap();
-    //let tera = Arc::new(tera);
     let context = tera::Context::new();
     let rendered = tera.render("create.html", &context).unwrap();
     let response = Response::new(Body::from(rendered));
@@ -94,7 +91,6 @@ async fn get_comment(
         comments: entry.4,
     };
     let tera = Tera::new("templates/*.html").unwrap();
-    //let tera = Arc::new(tera);
     let mut context = tera::Context::new();
     context.insert("secret", &secret);
     let rendered = tera.render("comment.html", &context).unwrap();

@@ -7,4 +7,3 @@ form       { padding:.1em; width: 400px; border: 1px }
 .entry     { margin-bottom: 2em; padding-bottom: 2em; border-bottom: 1px solid #888; }
 input[type=text] { margin: .5em 0; padding: .5em; font-size: 12px; color: #777; width: 200px;}
 input[type=textarea] { margin: .5em 0; padding: .5em; font-size: 12px; color: #777; width: 200px;}
-

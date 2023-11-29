@@ -16,3 +16,7 @@ This will be an anonymous secret posting website where strangers can post their 
 - Input / upload validation
 - Captcha 
 - Depending on how much time the rest of this takes, this could become more of a community where there are user accounts
+
+## License
+
+[LICENSE](LICENSE)
