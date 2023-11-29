@@ -3,6 +3,14 @@ based on [Post Secret](https://postsecret.com/)
 
 An anonymous secret posting website where strangers can post their secrets to the discussion board and leave anonymous comments on individual secrets.
 
+## How to Build and Run Rust-Secret:
+
+1. Download the files in this repository.
+2. Ensure you have [Rust](https://www.rust-lang.org/tools/install) downloaded on your local machine.
+3. Build the project: `cargo build`
+4. Run the project: `cargo run`
+5. Open a web browser. The project will run on Port 3000: `http://localhost:3000`
+
 ## MVP: 
 - A basic webpage that has the ability to post a secret to the main discussion board
 - The ability to post a comment on a post
@@ -34,4 +42,12 @@ With the time available for the project, I am pleased to have met my MVP goal. I
 
 ## Testing
 
-All of the testing for this project was end-to-end testing done by locally hosting the page and entering secrets and comments. One thing I would like to improve upon for this project would be getting unit testing and mocking frameworks set up so that I can properly test this software.
+All of the testing for this project was end-to-end testing done by locally hosting the page and entering secrets and comments by hand. One thing I would like to improve upon for this project would be getting unit testing and mocking frameworks set up so that I can properly test this software.
+
+## Rust Secret UI
+
+### Home Page
+![Rust Secret homepage, black background with red titles and white text](Rust-Secret.png)
+
+### Comment Page
+![Rust Secret comment page, black background with red titles and white text](Comment.png)

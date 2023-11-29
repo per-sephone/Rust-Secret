@@ -7,8 +7,8 @@ edition = "2021"
 axum = { version = "0.6.20"}
 axum-macros = "0.3.8"
 tokio = { version = "1", features = ["full"] }
-rusqlite = "0.30.0"
-hyper = "1.0.1"
+rusqlite = "0.29.0"
+hyper = "0.14.27"
 dotenv = "0.15.0"
 tera = "1"
 chrono = "0.4.31"
