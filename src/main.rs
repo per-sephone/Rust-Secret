@@ -11,7 +11,6 @@ mod model;
 use chrono::Local;
 use model::Model;
 use tower_http::services::ServeDir;
-//use serde_json;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Secret {
