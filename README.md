@@ -11,6 +11,13 @@ An anonymous secret posting website where strangers can post their secrets to th
 4. Run the project: `cargo run`
 5. Open a web browser. The project will run on Port 3000: `http://localhost:3000`
 
+## How to Get Developer Docs:
+
+1. If you have not already downloaded the files in the repo, do so.
+2. Ensure you have [Rust](https://www.rust-lang.org/tools/install) downloaded on your local machine.
+3. Run Rust Docs: `cargo doc --no-deps --open`
+4. The docs will generate and open in your web browser.
+
 ## MVP: 
 - A basic webpage that has the ability to post a secret to the main discussion board
 - The ability to post a comment on a post
