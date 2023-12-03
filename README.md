@@ -54,7 +54,13 @@ All of the testing for this project was end-to-end testing done by locally hosti
 ## Rust Secret UI
 
 ### Home Page
-![Rust Secret homepage, black background with red titles and white text](Rust-Secret.png)
+![showing Rust Secret homepage with black background, red titles and white text](home.png)
 
 ### Comment Page
-![Rust Secret comment page, black background with red titles and white text](Comment.png)
+![showing Rust Secret comment page with black background, red titles and white text](comment.png)
+
+## Search Page
+![showing Rust Secret search page with black background, red titles and white text](search.png)
+
+## Search Results
+![showing Rust Secret search results page with black background, red titles, and white text](tagged.png)
