@@ -1,20 +1,19 @@
 {% extends "layout.html" %}
 {% block content %}
-
-<h2>Leave a Comment</h2>
 <form action="comment/{{ secret.id }}" method=post>
     <p class=entry>
         {{ secret.body }}<br>
         {{ secret.timestamp }} <br>
-        Tagged: {{ secret.tag }} <br><br><br>
+        Tagged: {{ secret.tag }} <br>
 
-        <h2>Comments</h2>
+        <h2>Comments:</h2>
         <p>
         {% for each in secret.comments %}
-        {{ each }} <br><br><br>
+        {{ each }} <br><hr><br>
+
         {% endfor %}
         </p>
-        
+        <h2>Leave a Comment</h2>
         <p class="heading">
             <textarea rows=5 cols=50 name=comment></textarea></p>
         <input type=submit value="Comment"></input>

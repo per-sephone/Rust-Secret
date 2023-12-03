@@ -203,4 +203,23 @@ impl Model {
         });
         Ok(result.unwrap())
     }
+    pub fn select_by_tag(&self, tag: String) -> Result<Vec<Row>> {
+        let mut stmt = self.connection.prepare("SELECT * FROM secrets WHERE tag = ?")?;
+        let result = stmt.query_map([tag], |row| {
+            let json_text: String = row.get(4)?;
+            let json_value = serde_json::from_str(&json_text).unwrap();
+            let json_array: Vec<String> = serde_json::from_value(json_value).unwrap();
+            Ok((
+                row.get(0)?,
+                row.get(1)?,
+                row.get(2)?,
+                row.get(3)?,
+                json_array,
+            ))
+        })?.collect();
+        match result {
+            Ok(rows) => Ok(rows),
+            Err(err) => Err(err)
+        }
+    }
 }

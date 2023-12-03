@@ -3,7 +3,7 @@ based on [Post Secret](https://postsecret.com/)
 
 An anonymous secret posting website where strangers can post their secrets to the discussion board and leave anonymous comments on individual secrets.
 
-## How to Build and Run Rust-Secret:
+## How to Build and Run Rust Secret:
 
 1. Download the files in this repository.
 2. Ensure you have [Rust](https://www.rust-lang.org/tools/install) downloaded on your local machine.
@@ -24,7 +24,7 @@ An anonymous secret posting website where strangers can post their secrets to th
 - A database to store the posted secrets and comments
 
 ## Stretch Goals (for the future):
-- Subject Tags on posts 
+- Subject Tags on posts ✅
 - A search feature based on subject tags
 - Links to popular subjects tags
 - Option to post an image (more similar to postsecret)

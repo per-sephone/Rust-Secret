@@ -1,6 +1,6 @@
 // Used ChatGPT for help generating rust doc comments
 use axum::body::Body;
-use axum::extract::{Form, Path};
+use axum::extract::{Form, Path, Query};
 use axum::http::Response;
 use axum::response::Redirect;
 use axum::routing::{get, post};
@@ -34,6 +34,11 @@ pub struct FormData {
 #[derive(Deserialize)]
 pub struct CommentData {
     pub comment: String,
+}
+
+#[derive(Deserialize)]
+pub struct QueryData {
+    pub tag: Option<String>,
 }
 
 /// Gets the current timestamp in PST in the format "%Y-%m-%d %H:%M".
@@ -118,6 +123,50 @@ pub async fn post_comment(Path(id): Path<i64>, Form(form): Form<CommentData>) ->
     Redirect::to(&format!("/comment/{}", id))
 }
 
+#[debug_handler]
+pub async fn search(Query(query): Query<QueryData>) -> Result<Response<Body>, axum::body::Empty<axum::body::Bytes>> {
+    match query.tag {
+        Some(tag) => {
+            // Render the search results
+            let model = establish_connection();
+            let entries = match model.select_by_tag(tag.to_string()) {
+                Ok(entries) => {
+                    entries
+                    .iter()
+                    .map(|row| Secret {
+                        id: row.0,
+                        body: row.1.clone(),
+                        timestamp: row.2.clone(),
+                        tag: row.3.clone(),
+                        comments: row.4.clone(),
+                    })
+                    .collect()
+
+                },
+                Err(err) => {
+                    eprintln!("No entries exist with this tag {}", err);
+                    Vec::new()
+                }
+            };
+            let tera = Tera::new("templates/*.html").unwrap();
+            let mut context = tera::Context::new();
+            context.insert("entries", &entries);
+            context.insert("tag", &tag);
+            let rendered = tera.render("search_results.html", &context).unwrap();
+            let response = Response::new(Body::from(rendered));
+            Ok(response)
+        },
+        None => {
+            //Render the page for searching
+            let tera = Tera::new("templates/*.html").unwrap();
+            let context = tera::Context::new();
+            let rendered = tera.render("search.html", &context).unwrap();
+            let response = Response::new(Body::from(rendered));
+            Ok(response)
+        },
+    }
+}
+
 /// The main entry point of the application, defining routes and starting the server.
 #[tokio::main]
 pub async fn main() {
@@ -126,6 +175,7 @@ pub async fn main() {
         .route("/create", get(get_create).post(post_create))
         .route("/comment/:id", get(get_comment))
         .route("/comment/comment/:id", post(post_comment))
+        .route("/search", get(search))
         // https://www.joeymckenzie.tech/blog/templates-with-rust-axum-htmx-askama
         .nest_service( // serves the CSS file
             "/static",

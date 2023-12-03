@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h2>Search by Secret Tag</h2>
+    <form action="search" method=get>
+        <p class="heading">Tag: <input name=tag></p>
+	<p><input type=submit value=Submit></p>
+    </form>
+<a href="/">Back</a>
+
+{% endblock %}

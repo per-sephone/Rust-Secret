@@ -1,28 +1,18 @@
 {% extends "layout.html" %}
-{% block title %}Rust Secret{% endblock title %}
-{% block head %}
-    {{ super() }}
-{% endblock head %}
 {% block content %}
-<br>
-
-<a href="create">Click Here to Share a Secret</a><br><br>
-<a href="search">Click Here to Search by Tag</a><br><br>
-
-    <h2>Secrets</h2>
+    <h2>Secrets Tagged: {{ tag }}</h2>
 
     {% for secret in entries %}
     <form action="comment/{{ secret.id }}" method=get>
         <p class=secret>
             {{ secret.body }}<br>
             {{ secret.timestamp }} <br>
-            Tagged: {{ secret.tag }} <br>
-
             <input type=submit value="Comment"></input>
 
         </p>
         <hr>
     </form>
+
     {% endfor %}
 
 
