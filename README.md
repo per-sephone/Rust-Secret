@@ -64,3 +64,5 @@ All of the testing for this project was end-to-end testing done by locally hosti
 
 ## Search Results
 ![showing Rust Secret search results page with black background, red titles, and white text](tagged.png)
+
+[def]: comment.png
