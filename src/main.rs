@@ -129,14 +129,15 @@ pub async fn post_comment(Path(id): Path<i64>, Form(form): Form<CommentData>) ->
 /// The other branch matches to no query results which renders the page used to enter the search string
 /// If no results are found, the search results page renders with no secrets
 #[debug_handler]
-pub async fn search(Query(query): Query<QueryData>) -> Result<Response<Body>, axum::body::Empty<axum::body::Bytes>> {
+pub async fn search(
+    Query(query): Query<QueryData>,
+) -> Result<Response<Body>, axum::body::Empty<axum::body::Bytes>> {
     match query.tag {
         Some(tag) => {
             // Render the search results
             let model = establish_connection();
             let entries = match model.select_by_tag(tag.to_string()) {
-                Ok(entries) => {
-                    entries
+                Ok(entries) => entries
                     .iter()
                     .map(|row| Secret {
                         id: row.0,
@@ -145,9 +146,7 @@ pub async fn search(Query(query): Query<QueryData>) -> Result<Response<Body>, ax
                         tag: row.3.clone(),
                         comments: row.4.clone(),
                     })
-                    .collect()
-
-                },
+                    .collect(),
                 Err(err) => {
                     eprintln!("No entries exist with this tag {}", err);
                     Vec::new()
@@ -160,7 +159,7 @@ pub async fn search(Query(query): Query<QueryData>) -> Result<Response<Body>, ax
             let rendered = tera.render("search_results.html", &context).unwrap();
             let response = Response::new(Body::from(rendered));
             Ok(response)
-        },
+        }
         None => {
             //Render the page for searching
             let tera = Tera::new("templates/*.html").unwrap();
@@ -168,7 +167,7 @@ pub async fn search(Query(query): Query<QueryData>) -> Result<Response<Body>, ax
             let rendered = tera.render("search.html", &context).unwrap();
             let response = Response::new(Body::from(rendered));
             Ok(response)
-        },
+        }
     }
 }
 
@@ -182,7 +181,8 @@ pub async fn main() {
         .route("/comment/comment/:id", post(post_comment))
         .route("/search", get(search))
         // https://www.joeymckenzie.tech/blog/templates-with-rust-axum-htmx-askama
-        .nest_service( // serves the CSS file
+        .nest_service(
+            // serves the CSS file
             "/static",
             ServeDir::new(format!(
                 "{}/static",
