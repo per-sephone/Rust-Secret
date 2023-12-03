@@ -203,6 +203,37 @@ impl Model {
         });
         Ok(result.unwrap())
     }
+
+    /// Retrieves a list of secrets from the database that matches a tag
+    /// 
+    /// # Arguments
+    /// 
+    /// * `tag` - the tag of the secrets to retrieve
+    /// 
+    /// # Returns
+    /// 
+    /// A `Result` containing either a Vector of Rows or an error if the query fails
+    /// 
+    /// # Errors
+    /// 
+    /// Returns an error if the tag is not found
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use model::YourModel;
+    ///
+    /// match your_model.select_by_tag(tag) {
+    ///     Ok(secrets) => {
+    ///         for secret in secrets {
+    ///             // Process each secret
+    ///         }
+    ///     },
+    ///     Err(error) => {
+    ///         eprintln!("Tag does not exist: {:?}", error);
+    ///     },
+    /// }
+    /// ````
     pub fn select_by_tag(&self, tag: String) -> Result<Vec<Row>> {
         let mut stmt = self.connection.prepare("SELECT * FROM secrets WHERE tag = ?")?;
         let result = stmt.query_map([tag], |row| {

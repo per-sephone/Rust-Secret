@@ -36,6 +36,7 @@ pub struct CommentData {
     pub comment: String,
 }
 
+/// Represents query data used for query based on tage
 #[derive(Deserialize)]
 pub struct QueryData {
     pub tag: Option<String>,
@@ -123,6 +124,10 @@ pub async fn post_comment(Path(id): Path<i64>, Form(form): Form<CommentData>) ->
     Redirect::to(&format!("/comment/{}", id))
 }
 
+/// Handles GET requests to the "/search" path
+/// One branch matches to a query results using "tag" to search for posts and renders all the matching posts
+/// The other branch matches to no query results which renders the page used to enter the search string
+/// If no results are found, the search results page renders with no secrets
 #[debug_handler]
 pub async fn search(Query(query): Query<QueryData>) -> Result<Response<Body>, axum::body::Empty<axum::body::Bytes>> {
     match query.tag {
