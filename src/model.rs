@@ -221,7 +221,7 @@ impl Model {
     /// # Examples
     ///
     /// ```rust
-    /// use model::YourModel;
+    /// use model::Model;
     ///
     /// match your_model.select_by_tag(tag) {
     ///     Ok(secrets) => {
