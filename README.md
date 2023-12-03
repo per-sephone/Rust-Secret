@@ -25,7 +25,7 @@ An anonymous secret posting website where strangers can post their secrets to th
 
 ## Stretch Goals (for the future):
 - Subject Tags on posts ✅
-- A search feature based on subject tags
+- A search feature based on subject tags ✅
 - Links to popular subjects tags
 - Option to post an image (more similar to postsecret)
 - Input / upload validation
